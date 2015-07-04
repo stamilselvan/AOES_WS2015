@@ -1,0 +1,189 @@
+package analysis;
+
+import java.util.*;
+import java.util.Map.Entry;
+
+import stmt.*;
+import flow.*;
+import aexp.*;
+
+// To implement a concrete analysis, you can instantiate the class with the needed type and overwrite kill, gen, and analyse.
+// Alternatively, you can remove the type parameter and exchange Domain with the needed type.
+public class Analysis<Domain> {
+	// The statement for which the analysis is performed
+	Statement stmt;
+	
+	// The following attributes are initialised using the method constructFlowGraph.
+	
+	// we work on a flow graph
+	FlowGraph fg = null;
+	
+	// the following could also be extracted from the flow graph,
+	// it makes things simpler to have them at hand directly
+	Set<Integer> labels;
+	Set<Edge> flow;
+	Set<Edge> flowR;
+	Set<Integer> finals;
+	int init;
+	Map<Integer,Block> blocks;
+	
+	Map<Integer, Set<Integer>> pred = new HashMap<Integer, Set<Integer>>(); 
+	Map<Integer, Set<Integer>> succ = new HashMap<Integer, Set<Integer>>();
+	Set<Variable> fv = new HashSet<Variable>();
+	
+	// this information is calculated based on the flow graph
+	// set of all non-trivial arithmetic expressions
+	Set<AExp> aexps;
+	// set of all used program variables
+	Set<Variable> vars;
+
+	
+	// The constructor takes the statement to be worked on and automatically constructs the flow graph.
+	// TODO: The constructor of a subclass need to call this constructor with "super(S)"
+	public Analysis(Statement S){
+		stmt = S;
+		constructFlowGraph();
+	}
+	
+	// the kill information of a block
+	// TODO: this method needs to be overwritten for concrete analyses
+	Set<Domain> kill(Block b){
+		Set<Domain> kills = new HashSet<Domain>();
+		
+		if( b instanceof Asg){
+			// TODO: insert appropriate code			
+			return kills;
+		}
+		
+		if( b instanceof Cond){
+			// TODO: insert appropriate code
+			return kills;
+		}
+
+		if( b instanceof flow.Skip){
+			// TODO: insert appropriate code
+			return kills;
+		}
+		
+		return null;
+	}
+	
+	// the gen information of a block
+	// TODO: this method needs to be overwritten for concrete analyses
+	Set<Domain> gen(Block b){
+		Set<Domain> gens = new HashSet<Domain>();
+		
+		if( b instanceof Asg){
+			// TODO: insert appropriate code			
+			return gens;
+		}
+		
+		if( b instanceof Cond){
+			// TODO: insert appropriate code
+			return gens;
+		}
+
+		if( b instanceof flow.Skip){
+			// TODO: insert appropriate code
+			return gens;
+		}
+		
+		return null;
+	}
+	
+	// collect the kill information for all blocks in a map
+	final Map<Integer,Set<Domain>> getKill(Map<Integer,Block> blocks){
+		Map<Integer,Set<Domain>> kills = new HashMap<Integer,Set<Domain>>();
+		
+		Iterator<Entry<Integer,Block>> it = blocks.entrySet().iterator();
+		Entry<Integer,Block> entry;
+		while(it.hasNext()){
+			entry = it.next();
+			kills.put(entry.getKey(), kill(entry.getValue()));
+		}
+		
+		return kills;
+	}
+	
+	// collect the gen information for all blocks in a map
+	final Map<Integer,Set<Domain>> getGen(Map<Integer,Block> blocks){
+		Map<Integer,Set<Domain>> gens = new HashMap<Integer,Set<Domain>>();
+		
+		Iterator<Entry<Integer,Block>> it = blocks.entrySet().iterator();
+		Entry<Integer,Block> entry;
+		while(it.hasNext()){
+			entry = it.next();
+			gens.put(entry.getKey(), gen(entry.getValue()));
+		}
+		
+		return gens;
+	}
+	
+	// this method should be run before analyse, as it initialises the
+	// flow graph that gives the basis for the analysis
+	private final void constructFlowGraph(){
+		// first, construct the flow graph
+		fg = stmt.constructFlowGraph(1);
+				
+		// get the necessary information from the flow graph
+		labels = fg.getLabels();
+		flow = fg.getFlow();
+		flowR = fg.getFlowR();
+		finals = fg.getFinals();
+		init = fg.getInit();
+		blocks = fg.getBlocks();
+		
+		// calculate the arithmetic expressions occurring in the flow graph
+		aexps = new HashSet<AExp>();
+		Iterator<Integer> it_labels = labels.iterator();
+		int lab;
+		while(it_labels.hasNext()){
+			lab = it_labels.next();
+			aexps.addAll(blocks.get(lab).getArithExpr());
+		}
+		
+		// calculate the set of all variables occurring in the flow graph
+		vars = new HashSet<Variable>();
+		it_labels = labels.iterator();
+		while(it_labels.hasNext()){
+			lab = it_labels.next();
+			vars.addAll(blocks.get(lab).getFV());
+		}
+		
+		// Construct predecessor and successor sets of program
+		int block_count = blocks.size();
+		for(int i=1; i<=block_count; i++){
+			Set<Integer> int_set1 = new HashSet<Integer>();
+			pred.put(i, int_set1);
+			Set<Integer> int_set2 = new HashSet<Integer>();
+			succ.put(i, int_set2);
+		}
+		
+		Iterator<Edge> flow_iter = flow.iterator();
+		while(flow_iter.hasNext()){
+			Edge edge = flow_iter.next();
+			succ.get(edge.getSource()).add(edge.getTarget());
+			pred.get(edge.getTarget()).add(edge.getSource());
+		}
+	}
+	
+	// perform the analysis
+	// TODO: this method needs to be overwritten for concrete analyses
+	public Map<Integer, Set<Domain>> analyse(){
+		// the analysis result is a mapping from the (entry or exit points of the) labels to subsets of the Domain
+		Map<Integer, Set<Domain>> entry_or_exit = new HashMap<Integer, Set<Domain>>();
+			
+		// construct the kill and gen tables
+		Map<Integer,Set<Domain>> kills = getKill(blocks);
+		Map<Integer,Set<Domain>> gens = getGen(blocks);
+		
+
+		// the working list
+		Set<Edge> W= new HashSet<Edge>();
+		
+		// TODO: Here, you need to define the actual analysis algorithm
+		
+		
+		return entry_or_exit;
+	}
+}

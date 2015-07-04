@@ -1,0 +1,168 @@
+package test;
+
+import aexp.*;
+import stmt.*;
+
+import java.io.FileReader;
+
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+
+import flow.Block;
+import parser.*;
+import analysis.*;
+
+import java.util.*;
+
+
+public class Test {
+	public static void testLive(String file){
+		Statement s = Parse(file);
+		
+		LiveVariables a = new LiveVariables();
+		a.constructFlowGraph(s);
+		
+		System.out.println("Performing a live variables analysis on the following program: \n");
+		
+		System.out.println(s);
+		
+		Map<Integer,Set<Variable>> res = a.analyse();
+		
+		System.out.println("Live Variable(s) at the exit of blocks:");
+		
+		System.out.println(res);
+	}
+	
+	public static void testAvail(String file){
+		
+		Statement s = Parse(file);
+		
+		AvailableExpressions a = new AvailableExpressions();
+		a.constructFlowGraph(s);
+				
+		System.out.println("Performing an available expressions analysis on the following program: \n");
+		
+		System.out.println(s);
+		
+		Map<Integer,Set<AExp>> res = a.analyse();
+		
+		System.out.println("AExp information at the exit of Blocks \n" + res + "\n");
+	}
+	
+	public static void testDominator(String file){
+		Statement s = Parse(file);
+		
+		Dominator a = new Dominator();
+		a.constructFlowGraph(s);
+		
+		System.out.println("Performing a Dominator analysis on the following program: \n");
+		
+		System.out.println(s);
+		
+		Map<Integer,Set<Integer>> res = a.analyse();
+		
+		System.out.println("\nResult of dominator analysis\n");
+		
+		System.out.println(res);
+	}
+	
+	public static Map<Integer,Set<RD>> testReaching(String file){
+		
+		Statement s = Parse(file);
+		
+		ReachingDefinition a = new ReachingDefinition();
+		a.constructFlowGraph(s);
+				
+		System.out.println("Performing Reaching Definition analysis on the following program:");
+		
+		System.out.println(s);
+		
+		Map<Integer,Set<RD>> res = a.analyse();
+		
+		System.out.println("\nRD at the entry of Blocks \n" + res + "\n");
+		
+		return res;
+	}
+	
+	public static void calcUD(String file){
+		
+		Statement s = Parse(file);
+		
+		ReachingDefinition a = new ReachingDefinition();
+		a.constructFlowGraph(s);
+		
+		System.out.println("Performing Use Definition analysis on the following program:");
+		System.out.println(s);
+		
+		Map<Integer,Set<RD>> rd = a.analyse();
+		
+		UD computeUD = new UD();
+		computeUD.constructFlowGraph(s);
+		computeUD.compute(rd);
+		
+	}
+	
+public static void calcDU(String file){
+		
+		Statement s = Parse(file);
+		
+		ReachingDefinition a = new ReachingDefinition();
+		a.constructFlowGraph(s);
+		
+		System.out.println("Performing Definition Use analysis on the following program:");
+		System.out.println(s);
+		
+		Map<Integer,Set<RD>> rd = a.analyse();
+		
+		DU computeUD = new DU();
+		computeUD.constructFlowGraph(s);
+		computeUD.compute(rd);
+		
+	}
+	
+	public static Statement Parse(String file){
+		Statement s;
+		
+		try{
+			FileReader fr = new FileReader(file);
+			
+			CharStream stream = new ANTLRInputStream(fr);
+		    WHILELexer lexer = new WHILELexer(stream);
+		    CommonTokenStream tokens = new CommonTokenStream(lexer);
+		    WHILEParser parser = new WHILEParser(tokens);
+	
+		    s = parser.statement().s;
+		}catch(Exception e){System.out.println(e.getMessage()); return null;}
+		
+	    return s;
+	}
+	
+	
+	public static void main(String[] args) {
+		String Ex5 = "programs/Ex5_LiveVar.txt";
+		String Ex6 = "programs/Ex6_AE_LiveVar.txt";
+		String Ex7 = "programs/Ex7_SubExpElimination.txt";
+		String Ex9 = "programs/Ex9_Dominator.txt";
+		String Ex3 = "programs/Ex3_RD.txt";
+		String testRD = "programs/testRD.txt";
+//		
+//		System.out.println("\n--------------------------------------------------------------------\n");
+//		testLive(Ex5);
+//		System.out.println("\n--------------------------------------------------------------------\n");
+//		testLive(Ex6);
+//		System.out.println("\n--------------------------------------------------------------------\n");
+//		testAvail(Ex6);
+//		System.out.println("\n--------------------------------------------------------------------\n");
+//		testAvail(Ex7);
+//		System.out.println("\n--------------------------------------------------------------------\n");
+//		testDominator(Ex9);
+//		System.out.println("\n--------------------------------------------------------------------\n");
+		
+		//testReaching(Ex3);
+		calcUD(testRD);
+//		calcDU(Ex3);
+		
+	}
+
+}

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
+		<item value="309" key="DIALOG_WIDTH"/>
+		<item value="130" key="DIALOG_Y_ORIGIN"/>
+		<item value="368" key="DIALOG_HEIGHT"/>
+		<item value="866" key="DIALOG_X_ORIGIN"/>
+		<item value="1|Ubuntu|11.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item value="true" key="wrap"/>
+		<item value="false" key="isRegEx"/>
+		<item value="true" key="casesensitive"/>
+		<item value="false" key="incremental"/>
+		<item value="false" key="wholeword"/>
+		<item value="get_fv_block" key="selection"/>
+		<list key="findhistory">
+			<item value="get_fv_block"/>
+			<item value="RD at the entry of Blocks"/>
+			<item value="RD at the entry of Blocks:"/>
+			<item value="UD"/>
+			<item value="fv"/>
+			<item value="Block"/>
+			<item value="Integer"/>
+			<item value="Live Variable(s) at the exit of blocks:"/>
+		</list>
+		<list key="replacehistory">
+			<item value="DU"/>
+			<item value="Integer"/>
+			<item value="Block"/>
+			<item value="gen"/>
+			<item value="kill"/>
+			<item value="Variable"/>
+			<item value="AExp"/>
+		</list>
+	</section>
+</section>

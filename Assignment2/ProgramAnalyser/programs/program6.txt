@@ -1,0 +1,8 @@
+x:=y;
+y:=25;
+while (y>x) do
+  while (x<5) do
+    x:=x+y
+  od
+od;
+x:=2*y

@@ -1,0 +1,70 @@
+/**
+ * 
+ */
+package analysis;
+
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
+
+import flow.Asg;
+import flow.Block;
+import flow.Cond;
+import stmt.Statement;
+import aexp.AExp;
+import aexp.Constant;
+import aexp.RD;
+import aexp.Variable;
+
+/**
+ * @author grp6
+ *
+ */
+public class ConstantFolding extends Analysis<AExp>{
+
+	public ConstantFolding(Statement S) {
+		super(S);
+		// TODO Auto-generated constructor stub
+	}
+
+	Integer check_constant(Block b){
+		
+		Integer value;
+		
+		if( b instanceof Asg){
+			AExp ae = ((Asg) b).getExpr();
+			if(ae instanceof Constant){
+				
+			}
+			return null;
+		}
+		
+		if( b instanceof Cond){
+			return null;
+		}
+
+		if( b instanceof flow.Skip){
+			return null;
+		}
+		
+		return null;
+	}
+	
+	public Statement optimise (Map<Integer,Set<RD>> UD){
+		
+		Iterator<Entry<Integer,Block>> it = blocks.entrySet().iterator();
+		Entry<Integer,Block> entry;
+		
+		while(it.hasNext()){
+			entry = it.next();
+			Block block = entry.getValue();
+			Integer node = entry.getKey();
+			
+			Integer value = check_constant(block);
+		}
+		
+		return null;
+	} 
+}

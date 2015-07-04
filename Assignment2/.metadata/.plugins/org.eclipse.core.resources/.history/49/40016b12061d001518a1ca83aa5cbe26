@@ -1,0 +1,14 @@
+/**
+ * 
+ */
+package analysis;
+
+import aexp.RD;
+
+/**
+ * @author grp6
+ *
+ */
+public class DU extends Analysis<RD>{
+
+}

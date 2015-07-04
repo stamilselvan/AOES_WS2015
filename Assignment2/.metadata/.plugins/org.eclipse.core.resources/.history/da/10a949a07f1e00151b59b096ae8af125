@@ -1,0 +1,12 @@
+/**
+ * 
+ */
+package analysis;
+
+/**
+ * @author tamilselvan
+ *
+ */
+public class ConstantFolding {
+
+}

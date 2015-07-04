@@ -1,0 +1,160 @@
+/**
+ * 
+ */
+package analysis;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
+import java.util.Map.Entry;
+
+import flow.Asg;
+import flow.Block;
+import flow.Cond;
+import aexp.RD;
+import aexp.Variable;
+
+/**
+ * @author grp6
+ *
+ */
+public class ReachingDefinition extends Analysis<RD> {
+
+	Set<RD> kill(Block b){
+		Set<RD> kills = new HashSet<RD>();
+		
+		if( b instanceof Asg){
+			RD rd = new RD();
+			rd.setLabel(-1);
+			Variable var = ((Asg) b).getVar();
+			rd.setVariable(var);
+			kills.add(rd);
+			
+			Iterator<Entry<Integer,Block>> it = blocks.entrySet().iterator();
+			Entry<Integer,Block> entry;
+			
+			while(it.hasNext()){
+				entry = it.next();
+				Block temp_block = entry.getValue();
+				RD temp_rd = new RD();
+				
+				if(temp_block instanceof Asg){
+					if(((Asg) temp_block).getVar().equals(var)) {
+						temp_rd.setLabel(entry.getKey());
+						temp_rd.setVariable(var);
+						kills.add(temp_rd);
+					}
+				}
+				
+			}
+			
+			return kills;
+		}
+		
+		if( b instanceof Cond){
+			return kills;
+		}
+
+		if( b instanceof flow.Skip){
+			return kills;
+		}
+		
+		return null;
+	}
+	
+	Set<RD> gen(Block b){
+		Set<RD> gens = new HashSet<RD>();
+		
+		if( b instanceof Asg){
+			RD rd = new RD();
+			rd.setLabel(((Asg) b).getLabel());
+			rd.setVariable(((Asg) b).getVar());
+			gens.add(rd);
+			return gens;
+		}
+		
+		if( b instanceof Cond){
+			return gens;
+		}
+
+		if( b instanceof flow.Skip){
+			return gens;
+		}
+		
+		return null;
+	}
+	
+	public Map<Integer, Set<RD>> analyse(){
+		if (fg == null){
+			System.err.println("The flow graph needs to be constructed using the method constructFlowGraph first.");
+			return null;
+		}
+
+		Map<Integer, Set<RD>> entry = new HashMap<Integer, Set<RD>>();
+		Map<Integer, Set<RD>> exit = new HashMap<Integer, Set<RD>>();
+		
+		Map<Integer,Set<RD>> kills = getKill(blocks);
+		Map<Integer,Set<RD>> gens = getGen(blocks);
+		
+		//System.out.println("\nKills: " +kills+ "\nGens " +gens);
+		Queue<Integer> wl = new LinkedList<Integer>();
+		Set<Variable> fv = new HashSet<Variable>();
+		Integer node;
+		
+		
+		int no_of_blocks = blocks.size();
+		for(int x=0; x<=no_of_blocks; x++) {
+			wl.add(x);
+			exit.put(x, gens.get(x));
+			fv.addAll(blocks.get(x).getFV());
+		}
+		
+		Iterator<Variable> iter_rd = fv.iterator();
+		Set<RD> entry_rd = new HashSet<RD>();
+		while(iter_rd.hasNext()){
+			RD temp_rd = new RD();
+			temp_rd.setLabel(-1);
+			temp_rd.setVariable(iter_rd.next());
+		}
+		
+		while(!wl.isEmpty()){
+			
+			Set<RD> pred_rd = new HashSet<RD>();
+			Set<RD> oldOut = new HashSet<RD>();
+			Set<RD> temp_rd = new HashSet<RD>();
+			
+			node = wl.remove();
+			
+			Iterator<Integer> iter_pred = pred.get(node).iterator();
+			while(iter_pred.hasNext()){
+				pred_rd.addAll(exit.get(iter_pred.next()));
+			}
+			
+			entry.put(node, pred_rd);
+			oldOut.addAll(exit.get(node));
+			
+			temp_rd.addAll(entry.get(node));
+			temp_rd.removeAll(kills.get(node));
+			temp_rd.addAll(gens.get(node));
+			exit.put(node, temp_rd);
+			
+			if(oldOut.equals(exit.get(node))){
+				// Nothing has changed
+			}
+			else {
+				Iterator<Integer> iter_succ = succ.get(node).iterator();
+				while(iter_succ.hasNext()){ 
+					wl.add(iter_succ.next());
+				}
+			}
+		}
+		System.out.println("Entry: \n" + entry);
+		
+		return exit;
+	}
+	
+}

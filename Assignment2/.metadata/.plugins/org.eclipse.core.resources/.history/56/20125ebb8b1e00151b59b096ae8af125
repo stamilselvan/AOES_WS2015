@@ -1,0 +1,93 @@
+/**
+ * 
+ */
+package analysis;
+
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
+
+import flow.Asg;
+import flow.Block;
+import flow.Cond;
+import stmt.Statement;
+import aexp.AExp;
+import aexp.AsgConst;
+import aexp.Constant;
+import aexp.RD;
+import aexp.Variable;
+
+/**
+ * @author grp6
+ *
+ */
+public class ConstantFolding extends Analysis<AExp>{
+
+	public ConstantFolding(Statement S) {
+		super(S);
+		// TODO Auto-generated constructor stub
+	}
+
+	public AsgConst check_constant(Block b){
+		
+		AsgConst temp = new AsgConst();
+		
+		if( b instanceof Asg){
+			AExp ae = ((Asg) b).getExpr();
+			if(ae instanceof Constant){
+				temp.setValue((Constant) ae);
+				temp.setVar(((Asg) b).getVar());
+				return temp;
+			}
+			return null;
+		}
+		
+		if( b instanceof Cond){
+			return null;
+		}
+
+		if( b instanceof flow.Skip){
+			return null;
+		}
+		
+		return null;
+	}
+	
+	public Statement optimise (Map<Integer,Set<RD>> UD){
+		
+		Iterator<Entry<Integer,Block>> it = blocks.entrySet().iterator();
+		Entry<Integer,Block> entry;
+		
+		while(it.hasNext()){
+			entry = it.next();
+			Block block = entry.getValue();
+			Integer node = entry.getKey();
+			
+			AsgConst value = check_constant(block);
+			
+			if(value != null){
+				// Current block is assignment to a constant
+				RD def_rd = new RD();
+				def_rd.setLabel(node);
+				def_rd.setVariable(value.getVar());
+				
+				for(int i=1; i<=blocks.size(); i++){
+					Set<RD> ud_block = UD.get(i);
+					Iterator<RD> iter_ud = ud_block.iterator();
+					
+					while(iter_ud.hasNext()){
+						RD curr_rd_iter = iter_ud.next();
+						if(curr_rd_iter.getVariable().equals(def_rd.getVariable())){
+							// Asg is using the var def at 'node'
+						}
+					}
+				}
+				
+			}
+		}
+		
+		return null;
+	} 
+}

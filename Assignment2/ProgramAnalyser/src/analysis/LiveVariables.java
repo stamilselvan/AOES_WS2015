@@ -1,0 +1,137 @@
+/**
+ * 
+ */
+package analysis;
+
+import flow.Asg;
+import flow.Block;
+import flow.Cond;
+
+import java.util.*;
+
+import stmt.Statement;
+import aexp.AExp;
+import aexp.Variable;
+
+/**
+ * @author grp6
+ *
+ */
+public class LiveVariables extends Analysis<Variable> {
+
+		public LiveVariables(Statement S) {
+		super(S);
+		// TODO Auto-generated constructor stub
+	}
+
+		@Override
+		Set<Variable> kill(Block b){
+			Set<Variable> kills = new HashSet<Variable>();
+			
+			if( b instanceof Asg){
+				kills.add(((Asg) b).getVar());			
+				return kills;
+			}
+			
+			if( b instanceof Cond){
+				// Nothing is killed in Cond
+				return kills;
+			}
+
+			if( b instanceof flow.Skip){
+				// Nothing is killed in Skip
+				return kills;
+			}
+			
+			return null;
+		}
+		
+		@Override
+		Set<Variable> gen(Block b){
+			Set<Variable> gens = new HashSet<Variable>();
+			
+			if( b instanceof Asg){
+				Set<AExp> temp_aexp = new HashSet<AExp>();
+			
+				temp_aexp.addAll(b.getArithExpr());
+				Iterator<AExp> iter_aexp =temp_aexp.iterator();
+				while(iter_aexp.hasNext()){
+					gens.addAll(iter_aexp.next().getFV());
+				}
+				return gens;
+			}
+			
+			if( b instanceof Cond){
+				gens.addAll(b.getFV());
+				return gens;
+			}
+
+			if( b instanceof flow.Skip){
+				// Nothing is generated in skip
+				return gens;
+			}
+			
+			return null;
+		}
+		
+		@Override
+		public Map<Integer,Set<Variable>> analyse(){
+			
+			if (fg == null){
+				System.err.println("The flow graph needs to be constructed using the method constructFlowGraph first.");
+				return null;
+			}
+			
+			Map<Integer, Set<Variable>> entry = new HashMap<Integer, Set<Variable>>();
+			Map<Integer, Set<Variable>> exit = new HashMap<Integer, Set<Variable>>();
+			
+			Map<Integer,Set<Variable>> kill = getKill(blocks);
+			Map<Integer,Set<Variable>> gen = getGen(blocks);
+			
+			Queue<Integer> wl = new LinkedList<Integer>();
+			Set<Variable> empty = new HashSet<Variable>();
+			Integer node;
+			
+			int no_of_blocks = blocks.size();
+			for(int x=no_of_blocks; x>=1; x--) {
+				wl.add(x);
+				exit.put(x, empty);
+				entry.put(x, gen.get(x));
+			}
+			
+			while(!wl.isEmpty()){
+				
+				Set<Variable> union = new HashSet<Variable>();
+				Set<Variable> oldIn = new HashSet<Variable>();
+				Set<Variable> temp_out = new HashSet<Variable>();
+				
+				node = wl.remove();
+				
+				Iterator<Integer> iter_succ = succ.get(node).iterator();
+				while(iter_succ.hasNext()){
+					union.addAll(entry.get(iter_succ.next()));
+				}	
+				
+				exit.put(node, union);
+				oldIn.addAll(entry.get(node));
+				
+				temp_out.addAll(exit.get(node));
+				temp_out.remove(kill.get(node));
+				temp_out.addAll(gen.get(node));
+				entry.put(node, temp_out);
+				
+				if(oldIn.equals(entry.get(node))){
+					// Nothing has changed
+				}
+				
+				else {
+					for(Integer node_pred : pred.get(node))
+						wl.add(node_pred);
+				}
+			}
+			
+			System.out.println("\nLive Variable(s) at the entry of blocks: \n" +entry+ "\n");
+			return exit;
+			
+		}
+}

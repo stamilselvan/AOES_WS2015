@@ -1,0 +1,8 @@
+z:=0;
+while ( (x==y) ) 
+do
+  z:=z+1;
+  if (x>y) then x:=x-y
+  		   else y:=y-x
+od;
+w:=x

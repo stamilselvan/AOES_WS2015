@@ -1,0 +1,131 @@
+/**
+ * 
+ */
+package analysis;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
+import java.util.Map.Entry;
+
+import stmt.Statement;
+import flow.Asg;
+import flow.Block;
+import flow.Cond;
+
+/**
+ * @author grp6
+ *
+ */
+public class Dominator extends Analysis<Integer>{
+
+	public Dominator(Statement S) {
+		super(S);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	Set<Integer> kill(Block b){
+		Set<Integer> kills = new HashSet<Integer>();
+		
+		if( b instanceof Asg){
+						
+			return kills;
+		}
+		
+		if( b instanceof Cond){
+			
+			return kills;
+		}
+
+		if( b instanceof flow.Skip){
+			
+			return kills;
+		}
+		
+		return null;
+	}
+	
+	@Override
+	Set<Integer> gen(Block b){
+		Set<Integer> gens = new HashSet<Integer>();
+		
+		if( b instanceof Asg){
+						
+			return gens;
+		}
+		
+		if( b instanceof Cond){
+			
+			return gens;
+		}
+
+		if( b instanceof flow.Skip){
+			
+			return gens;
+		}
+		
+		return null;
+	}
+	
+	public Map<Integer, Set<Integer>> analyse() {
+		if (fg == null){
+			System.err.println("The flow graph needs to be constructed using the method constructFlowGraph first.");
+			return null;
+		}
+		
+		Queue<Integer> wl = new LinkedList<Integer>();
+		Map<Integer, Set<Integer>> dom = new HashMap<Integer, Set<Integer>>();
+		Set<Integer> temp_block = new HashSet<Integer>();
+		
+		Integer node, block_count;
+		
+		block_count = blocks.size();
+		for(int i=1; i<= block_count; i++)
+			temp_block.add(i); 
+		
+		for(int i=1; i<= block_count; i++) {
+			Set<Integer> all_blocks = new HashSet<Integer>();
+			all_blocks.addAll(temp_block);
+			dom.put(i, all_blocks);
+		}
+
+		wl.add(fg.getInit());
+
+		while(!wl.isEmpty()){
+			node = wl.remove();
+			
+			Iterator<Integer> iter_pred = pred.get(node).iterator();
+			Set<Integer> intersection = new HashSet<Integer>();
+			Set<Integer> old_dom = new HashSet<Integer>();
+			
+			while(iter_pred.hasNext()){
+				int pred_node = iter_pred.next();
+				if(intersection.isEmpty())
+					intersection.addAll(dom.get(pred_node));
+				else
+					intersection.retainAll(dom.get(pred_node));
+			}
+			old_dom.addAll(dom.get(node));
+			
+			intersection.add(node);
+			dom.put(node, intersection);
+			
+			if(dom.get(node).equals(old_dom)){
+				// Nothing has changed
+			}
+			else {
+				Iterator<Integer> iter_succ = succ.get(node).iterator();
+				while(iter_succ.hasNext()){
+					wl.add(iter_succ.next());
+				}
+			}
+		}
+		
+		return dom;
+	}
+}

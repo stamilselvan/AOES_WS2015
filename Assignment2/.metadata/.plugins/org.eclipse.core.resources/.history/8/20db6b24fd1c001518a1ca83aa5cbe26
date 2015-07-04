@@ -1,0 +1,92 @@
+/**
+ * 
+ */
+package analysis;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
+
+import flow.Asg;
+import flow.Block;
+import flow.Cond;
+import aexp.AExp;
+import aexp.RD;
+import aexp.Variable;
+
+/**
+ * @author grp6
+ *
+ */
+public class UD extends Analysis<RD> {
+	
+	Set<Variable> get_fv_block(Block b){
+		Set<Variable> fv_block = new HashSet<Variable>();
+		
+		if( b instanceof Asg){
+			Set<AExp> aexp = b.getArithExpr();
+			Iterator<AExp> iter_aexp = aexp.iterator();
+			while(iter_aexp.hasNext()){
+				fv_block.addAll(iter_aexp.next().getFV());
+			}
+			return fv_block;
+		}
+		
+		if( b instanceof Cond){
+			fv_block.addAll(b.getFV());
+			return fv_block;
+		}
+
+		if( b instanceof flow.Skip){
+			return fv_block;
+		}
+		
+		return null;
+	}
+	
+	public Map<Integer,Set<RD>> compute(Map<Integer,Set<RD>> rd_entry){
+		
+		Map<Integer,Set<RD>> UD = new HashMap<Integer, Set<RD>>();
+		Set<Variable> block_fv = new HashSet<Variable>();
+		
+//		Iterator<Variable> iter_fv = fv.iterator();
+//		while(iter_fv.hasNext()){
+//			
+//		}
+		
+		
+		Iterator<Entry<Integer,Block>> it = blocks.entrySet().iterator();
+		Entry<Integer,Block> entry;
+		
+		while(it.hasNext()){
+			// x:=x+y
+			entry = it.next();
+			Block block = entry.getValue();
+			Integer node = entry.getKey();
+			block_fv.addAll(get_fv_block(block));
+			
+			Iterator<Variable> iter_fv = block_fv.iterator();
+			while(iter_fv.hasNext()){
+				// x,y from (x+y)
+				Set<RD> temp_rd = rd_entry.get(node);
+				Variable used_var = iter_fv.next();
+				
+				Iterator<RD> iter_rd = temp_rd.iterator();
+				while(iter_rd.hasNext()){
+					RD rd = iter_rd.next();
+					if(rd.getVariable().equals(used_var)){
+						
+					}
+				}
+			}
+		}
+		
+		
+		return null;
+		
+	}
+	
+}

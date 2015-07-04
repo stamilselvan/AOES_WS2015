@@ -1,0 +1,65 @@
+/**
+ * 
+ */
+package analysis;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
+
+import flow.Asg;
+import flow.Block;
+import flow.Cond;
+import aexp.RD;
+import aexp.Variable;
+
+/**
+ * @author grp6
+ *
+ */
+public class UD extends Analysis<RD> {
+	
+	Set<Variable> get_fv_block(Block b){
+		Set<Variable> fv_block = new HashSet<Variable>();
+		
+		if( b instanceof Asg){
+			
+			return fv_block;
+		}
+		
+		if( b instanceof Cond){
+			return fv_block;
+		}
+
+		if( b instanceof flow.Skip){
+			return fv_block;
+		}
+		
+		return null;
+	}
+	
+	public Map<Integer,Set<RD>> compute(Map<Integer,Set<RD>> RD){
+		
+		Iterator<Variable> iter_fv = fv.iterator();
+		while(iter_fv.hasNext()){
+			
+		}
+		
+		Iterator<Entry<Integer,Block>> it = blocks.entrySet().iterator();
+		Entry<Integer,Block> entry;
+		
+		while(it.hasNext()){
+			entry = it.next();
+			Block block = entry.getValue();
+			
+		}
+		
+		
+		return null;
+		
+	}
+	
+}

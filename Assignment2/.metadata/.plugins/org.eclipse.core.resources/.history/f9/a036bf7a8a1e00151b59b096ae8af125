@@ -1,0 +1,16 @@
+/**
+ * 
+ */
+package aexp;
+
+/**
+ * @author grp6
+ *
+ */
+public class AsgConst {
+
+	Variable var;
+	Constant value;
+	
+	
+}

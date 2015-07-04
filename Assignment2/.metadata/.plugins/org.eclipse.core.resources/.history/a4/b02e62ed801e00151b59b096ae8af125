@@ -1,0 +1,21 @@
+/**
+ * 
+ */
+package analysis;
+
+import stmt.Statement;
+import aexp.AExp;
+
+/**
+ * @author grp6
+ *
+ */
+public class ConstantFolding extends Analysis<AExp>{
+
+	public ConstantFolding(Statement S) {
+		super(S);
+		// TODO Auto-generated constructor stub
+	}
+
+	
+}

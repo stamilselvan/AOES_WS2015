@@ -1,0 +1,11 @@
+y:=0;
+if (x>2)
+  then x := 0-x
+  else x := 2*x 
+fi;
+while (x>0)
+do
+  z:=z-1;
+  x:=x+z
+od;
+a:=x

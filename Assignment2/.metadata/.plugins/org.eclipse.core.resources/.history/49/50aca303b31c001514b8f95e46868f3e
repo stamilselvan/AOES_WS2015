@@ -1,0 +1,69 @@
+/**
+ * 
+ */
+package aexp;
+
+/**
+ * @author grp6
+ *
+ */
+public class RD extends AExp {
+
+	Variable var;
+	int label;
+	
+	public Variable getVariable() {
+		return var;
+	}
+	
+	public void setVariable(Variable v) {
+		var = v;
+	}
+	
+	public int getLabel(){
+		return label;
+	}
+	public void setLabel(int l){
+		label = l;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + label;
+		result = prime * result + ((var == null) ? 0 : var.hashCode());
+		return result;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof RD)) {
+			return false;
+		}
+		RD other = (RD) obj;
+		if (label != other.label) {
+			return false;
+		}
+		if (var == null) {
+			if (other.var != null) {
+				return false;
+			}
+		} else if (!var.equals(other.var)) {
+			return false;
+		}
+		return true;
+	}
+	
+}

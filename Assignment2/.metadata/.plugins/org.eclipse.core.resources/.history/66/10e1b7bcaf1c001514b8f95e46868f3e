@@ -1,0 +1,16 @@
+/**
+ * 
+ */
+package aexp;
+
+/**
+ * @author grp6
+ *
+ */
+public class RD {
+
+	Variable var;
+	int label;
+	
+	
+}

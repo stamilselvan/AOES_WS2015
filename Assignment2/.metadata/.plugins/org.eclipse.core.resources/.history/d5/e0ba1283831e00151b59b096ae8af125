@@ -1,0 +1,55 @@
+/**
+ * 
+ */
+package analysis;
+
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+import flow.Asg;
+import flow.Block;
+import flow.Cond;
+import stmt.Statement;
+import aexp.AExp;
+import aexp.RD;
+import aexp.Variable;
+
+/**
+ * @author grp6
+ *
+ */
+public class ConstantFolding extends Analysis<AExp>{
+
+	public ConstantFolding(Statement S) {
+		super(S);
+		// TODO Auto-generated constructor stub
+	}
+
+	Set<Variable> get_fv_block(Block b){
+		Set<Variable> fv_block = new HashSet<Variable>();
+		
+		if( b instanceof Asg){
+			
+			
+			return fv_block;
+		}
+		
+		if( b instanceof Cond){
+			fv_block.addAll(b.getFV());
+			return fv_block;
+		}
+
+		if( b instanceof flow.Skip){
+			return fv_block;
+		}
+		
+		return null;
+	}
+	
+	public Statement optimise (Map<Integer,Set<RD>> UD){
+		
+		return null;
+	} 
+}

@@ -1,0 +1,8 @@
+x:=a+b;
+while (y>0)
+do
+  if (y>5) then y:=a+b
+           else z:=a+b
+  ;
+  y:=y-1    
+od     

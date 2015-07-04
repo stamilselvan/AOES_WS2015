@@ -1,0 +1,219 @@
+Performing a live variables analysis on the following program: 
+
+[z:=1]^1; 
+while( [y>0]^2) 
+do 
+  [x:=(x-1)]^3
+od; 
+[x:=2]^4
+
+Live Variable(s) at the entry of blocks: 
+{1=[y, x], 2=[y, x], 3=[y, x], 4=[]}
+
+Live Variable(s) at the exit of blocks:
+{1=[y, x], 2=[y, x], 3=[y, x], 4=[]}
+--------------------------------------------------------------------------
+
+Performing a live variables analysis on the following program: 
+
+if [((5*x)-y)<5]^1
+then 
+  [z:=((y+4)*x)]^2
+else 
+  [z:=((5*x)*(y+4))]^3
+fi; 
+while( [(x+y)>1]^4) 
+do 
+  [y:=((y/2)-x)]^5
+od; 
+[z:=((5*x)+(y+4))]^6
+
+Live Variable(s) at the entry of blocks: 
+{1=[y, x], 2=[y, x], 3=[y, x], 4=[y, x], 5=[y, x], 6=[y, x]}
+
+Live Variable(s) at the exit of blocks:
+{1=[y, x], 2=[y, x], 3=[y, x], 4=[y, x], 5=[y, x], 6=[]}
+--------------------------------------------------------------------------
+
+Performing an available expressions analysis on the following program: 
+
+if [((5*x)-y)<5]^1
+then 
+  [z:=((y+4)*x)]^2
+else 
+  [z:=((5*x)*(y+4))]^3
+fi; 
+while( [(x+y)>1]^4) 
+do 
+  [y:=((y/2)-x)]^5
+od; 
+[z:=((5*x)+(y+4))]^6
+
+AExp information at the entry of Blocks 
+{1=[], 2=[(5*x), ((5*x)-y)], 3=[(5*x), ((5*x)-y)], 4=[(5*x)], 5=[(x+y), (5*x)], 6=[(x+y), (5*x)]}
+
+AExp information at the exit of Blocks 
+{1=[(5*x), ((5*x)-y)], 2=[((y+4)*x), (5*x), (y+4), ((5*x)-y)], 3=[(5*x), (y+4), ((5*x)-y), ((5*x)*(y+4))], 4=[(x+y), (5*x)], 5=[(5*x)], 6=[(x+y), ((5*x)+(y+4)), (5*x), (y+4)]}
+
+--------------------------------------------------------------------------
+
+Performing an available expressions analysis on the following program: 
+
+[x:=(a+b)]^1; 
+while( [y>0]^2) 
+do 
+  if [y>5]^3
+  then 
+    [y:=(a+b)]^4
+  else 
+    [z:=(a+b)]^5
+  fi; 
+  [y:=(y-1)]^6
+od
+
+AExp information at the entry of Blocks 
+{1=[], 2=[(a+b)], 3=[(a+b)], 4=[(a+b)], 5=[(a+b)], 6=[(a+b)]}
+
+AExp information at the exit of Blocks 
+{1=[(a+b)], 2=[(a+b)], 3=[(a+b)], 4=[(a+b)], 5=[(a+b)], 6=[(a+b)]}
+
+--------------------------------------------------------------------------
+
+Performing a Dominator analysis on the following program: 
+
+[y:=0]^1; 
+if [x>2]^2
+then 
+  [x:=(0-x)]^3
+else 
+  [x:=(2*x)]^4
+fi; 
+while( [x>0]^5) 
+do 
+  [z:=(z-1)]^6; 
+  [x:=(x+z)]^7
+od; 
+[a:=x]^8
+
+Result of dominator analysis
+
+{1=[1], 2=[1, 2], 3=[1, 2, 3], 4=[1, 2, 4], 5=[1, 2, 5], 6=[1, 2, 5, 6], 7=[1, 2, 5, 6, 7], 8=[1, 2, 5, 8]}
+--------------------------------------------------------------------------
+
+Performing Reaching Definition analysis on the following program:
+[z:=0]^1; 
+while( [not(x=y)]^2) 
+do 
+  [z:=(z+1)]^3; 
+  if [x>y]^4
+  then 
+    [x:=(x-y)]^5
+  else 
+    [y:=(y-x)]^6
+  fi
+od; 
+[w:=x]^7
+
+RD at the exit of Blocks: 
+{1=[(y,?), (x,?), (w,?), (z,1)], 2=[(y,?), (x,?), (w,?), (x,5), (z,3), (z,1), (y,6)], 3=[(y,?), (x,?), (w,?), (z,3), (x,5), (y,6)], 4=[(y,?), (x,?), (w,?), (z,3), (x,5), (y,6)], 5=[(y,?), (w,?), (x,5), (z,3), (y,6)], 6=[(x,?), (w,?), (z,3), (x,5), (y,6)], 7=[(y,?), (x,?), (x,5), (z,3), (z,1), (y,6), (w,7)]}
+
+RD at the entry of Blocks 
+{1=[(z,?), (y,?), (x,?), (w,?)], 2=[(y,?), (x,?), (w,?), (z,3), (x,5), (z,1), (y,6)], 3=[(y,?), (x,?), (w,?), (z,3), (x,5), (z,1), (y,6)], 4=[(y,?), (x,?), (w,?), (x,5), (z,3), (y,6)], 5=[(y,?), (x,?), (w,?), (x,5), (z,3), (y,6)], 6=[(y,?), (x,?), (w,?), (x,5), (z,3), (y,6)], 7=[(y,?), (x,?), (w,?), (z,3), (x,5), (z,1), (y,6)]}
+
+The use-definition chains are the following:
+{1=[], 2=[(y,?), (x,?), (x,5), (y,6)], 3=[(z,3), (z,1)], 4=[(y,?), (x,?), (x,5), (y,6)], 5=[(y,?), (x,?), (x,5), (y,6)], 6=[(y,?), (x,?), (x,5), (y,6)], 7=[(x,?), (x,5)]}
+
+Explanation: 3=[(x,5), (y,2), (x,1)] means label 3, is using x defined at label 5 and label 1, using y defined at label 2. 
+
+The definition-use chains are the following:
+{1=[(z,3)], 2=[], 3=[(z,3)], 4=[], 5=[(x,4), (x,5), (x,2), (x,7), (x,6)], 6=[(y,4), (y,5), (y,2), (y,6)], 7=[]}
+
+Explanation: 1=[(x,4), (x,5), (x,3)] means x defined at label 1 is used by labels 4,5,3. 
+
+--------------------------------------------------------------------------
+
+Performing Reaching Definition analysis on the following program:
+[x:=y]^1; 
+[y:=25]^2; 
+while( [y>x]^3) 
+do 
+  while( [x<5]^4) 
+  do 
+    [x:=(x+y)]^5
+  od
+od; 
+[x:=(2*y)]^6
+
+RD at the exit of Blocks: 
+{1=[(y,?), (x,1)], 2=[(y,2), (x,1)], 3=[(x,5), (y,2), (x,1)], 4=[(x,5), (y,2), (x,1)], 5=[(x,5), (y,2)], 6=[(y,2), (x,6)]}
+
+RD at the entry of Blocks 
+{1=[(y,?), (x,?)], 2=[(y,?), (x,1)], 3=[(x,5), (y,2), (x,1)], 4=[(x,5), (y,2), (x,1)], 5=[(x,5), (y,2), (x,1)], 6=[(x,5), (y,2), (x,1)]}
+
+The use-definition chains are the following:
+{1=[(y,?)], 2=[], 3=[(x,5), (y,2), (x,1)], 4=[(x,5), (x,1)], 5=[(x,5), (y,2), (x,1)], 6=[(y,2)]}
+
+Explanation: 3=[(x,5), (y,2), (x,1)] means label 3, is using x defined at label 5 and label 1, using y defined at label 2. 
+
+The definition-use chains are the following:
+{1=[(x,4), (x,5), (x,3)], 2=[(y,5), (y,3), (y,6)], 3=[], 4=[], 5=[(x,4), (x,5), (x,3)], 6=[]}
+
+Explanation: 1=[(x,4), (x,5), (x,3)] means x defined at label 1 is used by labels 4,5,3. 
+
+--------------------------------------------------------------------------
+
+Performing Reaching Definition analysis on the following program:
+[x:=y]^1; 
+[y:=25]^2; 
+while( [y>x]^3) 
+do 
+  while( [x<5]^4) 
+  do 
+    [x:=(x+y)]^5
+  od
+od; 
+[x:=(2*y)]^6
+
+RD at the exit of Blocks: 
+{1=[(y,?), (x,1)], 2=[(y,2), (x,1)], 3=[(x,5), (y,2), (x,1)], 4=[(x,5), (y,2), (x,1)], 5=[(x,5), (y,2)], 6=[(y,2), (x,6)]}
+
+RD at the entry of Blocks 
+{1=[(y,?), (x,?)], 2=[(y,?), (x,1)], 3=[(x,5), (y,2), (x,1)], 4=[(x,5), (y,2), (x,1)], 5=[(x,5), (y,2), (x,1)], 6=[(x,5), (y,2), (x,1)]}
+
+The use-definition chains are the following:
+{1=[(y,?)], 2=[], 3=[(x,5), (y,2), (x,1)], 4=[(x,5), (x,1)], 5=[(x,5), (y,2), (x,1)], 6=[(y,2)]}
+
+Explanation: 3=[(x,5), (y,2), (x,1)] means label 3, is using x defined at label 5 and label 1, using y defined at label 2. 
+
+The definition-use chains are the following:
+{1=[(x,4), (x,5), (x,3)], 2=[(y,5), (y,3), (y,6)], 3=[], 4=[], 5=[(x,4), (x,5), (x,3)], 6=[]}
+
+Explanation: 1=[(x,4), (x,5), (x,3)] means x defined at label 1 is used by labels 4,5,3. 
+
+Performing Constant Folding on the following program: 
+
+[x:=y]^1; 
+[y:=25]^2; 
+while( [y>x]^3) 
+do 
+  while( [x<5]^4) 
+  do 
+    [x:=(x+y)]^5
+  od
+od; 
+[x:=(2*y)]^6
+
+The optimised program is the following: 
+
+[x:=y]^1; 
+[y:=25]^2; 
+while( [25>x]^3) 
+do 
+  while( [x<5]^4) 
+  do 
+    [x:=(x+25)]^5
+  od
+od; 
+[x:=(2*25)]^6
+--------------------------------------------------------------------------
+
